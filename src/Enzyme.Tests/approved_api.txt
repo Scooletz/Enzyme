@@ -1,0 +1,41 @@
+[assembly: System.Runtime.CompilerServices.InternalsVisibleToAttribute("Enzyme.Tests")]
+[assembly: System.Runtime.Versioning.TargetFrameworkAttribute(".NETCoreApp,Version=v2.1", FrameworkDisplayName="")]
+namespace Enzyme
+{
+    public interface IWriter<TContext>
+    {
+        void Write(ref TContext context, System.Span<byte> payload);
+    }
+    public class static Serializer
+    {
+        public static void Serialize<TContext, TValue>(ref TValue value, ref TContext context, Enzyme.IWriter<TContext> writer) { }
+    }
+}
+namespace Enzyme.Visiting
+{
+    public interface IVisitor
+    {
+        void On(bool value);
+        void On(byte value);
+        void On(sbyte value);
+        void On(short value);
+        void On(ushort value);
+        void On(int value);
+        void On(uint value);
+        void On(long value);
+        void On(ulong value);
+        void On(System.DateTime value);
+        void On(System.Guid value);
+        void On(System.Span<byte> utf8);
+        void OnNull();
+        void PopField();
+        void PushField(byte fieldNumber);
+    }
+    public class static Visitor
+    {
+        public static void Visit<TVisitor>(ref TVisitor visitor, System.Memory<byte> memory)
+            where TVisitor :  struct, Enzyme.Visiting.IVisitor { }
+        public static void Visit<TVisitor>(ref TVisitor visitor, System.Byte* bytes, int length)
+            where TVisitor :  struct, Enzyme.Visiting.IVisitor { }
+    }
+}
